@@ -12,13 +12,36 @@ import (
 var Domain string
 var Token string
 
-type Response[T string | Mode | Course | ClassRanking | Student | MonthlyPoints] struct {
+type Response[
+	T string |
+		Mode |
+		RequiredCourseMode |
+		ExamMode |
+		Course |
+		Paper |
+		Question |
+		ClassRanking |
+		Student |
+		MonthlyPoints] struct {
 	Code    string `json:"retCode"`
 	Message string `json:"retMsg"`
 	Data    []T    `json:"retObj"`
 }
 
-func Post[T string | Mode | Course | ClassRanking | Student | MonthlyPoints](path string, data url.Values, response *Response[T]) *Response[T] {
+func Post[
+	T string |
+		Mode |
+		RequiredCourseMode |
+		ExamMode |
+		Course |
+		Paper |
+		Question |
+		ClassRanking |
+		Student |
+		MonthlyPoints](
+	path string,
+	data url.Values,
+	response *Response[T]) *Response[T] {
 	api := Domain + path
 	result, _ := NewPost(api, data, Token)
 	err := json.Unmarshal(result, response)

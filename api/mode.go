@@ -7,6 +7,18 @@ type Mode struct {
 	Name string `json:"title"`
 }
 
+type RequiredCourseMode struct {
+	ModeId       string `json:"guid"`
+	ModeName     string `json:"title"`
+	ParentModeId string `json:"modeid"`
+}
+
+type ExamMode struct {
+	ModeId       string `json:"guid"`
+	ModeName     string `json:"title"`
+	ParentModeId string `json:"modeid"`
+}
+
 func GetTopLevelMode() *Response[Mode] {
 	data := url.Values{
 		"method": {"modesel"},
@@ -22,4 +34,20 @@ func GetSecondLevelMode(parentModeId string) *Response[Mode] {
 		"modeid": {parentModeId},
 	}
 	return Post(PATH_MODE, data, &Response[Mode]{})
+}
+
+func GetSecondLevelModeForRequiredCourses(userCode string) *Response[RequiredCourseMode] {
+	data := url.Values{
+		"method":   {"titlesel_bx"},
+		"idenguid": {userCode},
+	}
+	return Post(PATH_MODE, data, &Response[RequiredCourseMode]{})
+}
+
+func GetSecondLevelModeForExam(userCode string) *Response[ExamMode] {
+	data := url.Values{
+		"method":   {"titlesel"},
+		"idenguid": {userCode},
+	}
+	return Post(PATH_TEST, data, &Response[ExamMode]{})
 }
