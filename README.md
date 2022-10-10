@@ -3,7 +3,7 @@
 ### How to use:
 
 * study:
-  ``shparentcredits study -a <host> -t <access_token> -s <school_id> -c <class_id>``
+  ``shparentcredits study -a <host> -t <access_token> -s <school_id> -c <class_id> -r <true|false>``
 
 
 * exam:
@@ -16,6 +16,4 @@
 You can run ``shparentcredits --help`` to get more details.
 
 ### How to build
-``go build``
-
-``go mod tidy``
+Checkout project and execute ``go build``
