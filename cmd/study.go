@@ -12,6 +12,7 @@ import (
 
 var (
 	includeRequired bool
+	intervalSeconds int32
 	studyCmd        = &cobra.Command{
 		Use:   "study",
 		Short: "Visit courses",
@@ -41,6 +42,7 @@ func init() {
 	studyCmd.Flags().Int32VarP(&classId, "class-id", "c", 13989, "class id, default 13989(seeding-4)")
 	studyCmd.Flags().StringVarP(&token, "token", "t", "", "access token")
 	studyCmd.Flags().BoolVarP(&includeRequired, "include-required", "r", false, "whether to study the required courses, default false")
+	studyCmd.Flags().Int32VarP(&intervalSeconds, "interval-seconds", "i", 30, "the time interval(random seconds) between two courses, default 30s")
 
 	_ = studyCmd.MarkFlagRequired("host")
 	_ = studyCmd.MarkFlagRequired("token")
@@ -78,7 +80,7 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 			courses := api.GetCourse(parentMode.Id, childMode.Id, student.UserGuid)
 			for _, course := range courses.Data {
 				if course.IsVisited != "1" {
-					time.Sleep(time.Duration(rand.Intn(10)) * time.Second)
+					time.Sleep(time.Duration(rand.Intn(int(intervalSeconds))+5) * time.Second)
 					api.VisitCourse(student.UserGuid, course.Id)
 					fmt.Println("\t" + student.Username + " visited the course '/" +
 						parentMode.Name + "/" + childMode.Name + "/" + course.Name + "'," +
