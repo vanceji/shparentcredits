@@ -70,11 +70,11 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 
 	var points, _ = strconv.Atoi(student.Points)
 	if points > 594 {
-		fmt.Println(student.Username + "'points up to limited [" + student.Points + "]")
+		fmt.Println(student.Username + "," + student.Points + ",points up to limited [" + student.Points + "]")
 		return
 	}
 	courseCountToVisit := api.HowManyCoursesToVisitToday(student.UserGuid, now.Year(), int(now.Month()))
-	fmt.Println(student.Username + " need to visit [" + strconv.Itoa(courseCountToVisit) + "] courses.")
+	fmt.Println(student.Username + "," + student.Points + ",need to visit [" + strconv.Itoa(courseCountToVisit) + "] courses.")
 	if courseCountToVisit == 0 {
 		return
 	}
