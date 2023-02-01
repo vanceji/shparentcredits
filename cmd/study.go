@@ -68,12 +68,17 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 		}
 	}
 
+	var MaxPoints = 600
+	var PointsPerCourse = 2
 	var points, _ = strconv.Atoi(student.Points)
-	if points > 594 {
+	if points >= MaxPoints {
 		fmt.Println(student.Username + "," + student.Points + ",points up to limited [" + student.Points + "]")
 		return
 	}
 	courseCountToVisit := api.HowManyCoursesToVisitToday(student.UserGuid, now.Year(), int(now.Month()))
+	if points > 594 {
+		courseCountToVisit = (MaxPoints - points) / PointsPerCourse
+	}
 	fmt.Println(student.Username + "," + student.Points + ",need to visit [" + strconv.Itoa(courseCountToVisit) + "] courses.")
 	if courseCountToVisit == 0 {
 		return
@@ -85,7 +90,7 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 			courses := api.GetCourse(parentMode.Id, childMode.Id, student.UserGuid)
 			for _, course := range courses.Data {
 				if course.IsVisited != "1" {
-					time.Sleep(time.Duration(rand.Intn(int(intervalSeconds))+5) * time.Second)
+					time.Sleep(time.Duration(rand.Intn(int(intervalSeconds))+90) * time.Second)
 					api.VisitCourse(student.UserGuid, course.Id)
 					fmt.Println("\t" + student.Username + " visited the course '/" +
 						parentMode.Name + "/" + childMode.Name + "/" + course.Name + "'," +
