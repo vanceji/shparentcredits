@@ -69,16 +69,15 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 	}
 
 	var MaxPoints = 600
-	var PointsPerCourse = 2
 	var points, _ = strconv.Atoi(student.Points)
 	if points >= MaxPoints {
 		fmt.Println(student.Username + "," + student.Points + ",points up to limited [" + student.Points + "]")
 		return
 	}
 	courseCountToVisit := api.HowManyCoursesToVisitToday(student.UserGuid, now.Year(), int(now.Month()))
-	if points > 594 {
-		courseCountToVisit = (MaxPoints - points) / PointsPerCourse
-	}
+	//if points > 594 {
+	//	courseCountToVisit = (MaxPoints - points) / 2
+	//}
 	fmt.Println(student.Username + "," + student.Points + ",need to visit [" + strconv.Itoa(courseCountToVisit) + "] courses.")
 	if courseCountToVisit == 0 {
 		return
