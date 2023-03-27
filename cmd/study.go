@@ -6,14 +6,17 @@ import (
 	"github.com/vanceji/shparentcredits/api"
 	"math/rand"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
 
 var (
-	includeRequired bool
-	intervalSeconds int32
-	studyCmd        = &cobra.Command{
+	includeRequired  bool
+	intervalSeconds  int32
+	studentWhitelist string
+	studentBlacklist string
+	studyCmd         = &cobra.Command{
 		Use:   "study",
 		Short: "Visit courses",
 		Long: `Visit courses to get credits. For example:
@@ -43,7 +46,8 @@ func init() {
 	studyCmd.Flags().StringVarP(&token, "token", "t", "", "access token")
 	studyCmd.Flags().BoolVarP(&includeRequired, "include-required", "r", false, "whether to study the required courses, default false")
 	studyCmd.Flags().Int32VarP(&intervalSeconds, "interval-seconds", "i", 30, "the time interval(random seconds) between two courses, default 30s")
-
+	studyCmd.Flags().StringVarP(&studentWhitelist, "whitelist", "w", "", "the student name whitelist")
+	studyCmd.Flags().StringVarP(&studentBlacklist, "blacklist", "b", "", "the student name blacklist")
 	_ = studyCmd.MarkFlagRequired("host")
 	_ = studyCmd.MarkFlagRequired("token")
 
@@ -83,6 +87,14 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 		return
 	}
 
+	if strings.TrimSpace(studentWhitelist) != "" && !isInlist(studentWhitelist, student.Username) {
+		return
+	}
+
+	if strings.TrimSpace(studentBlacklist) != "" && isInlist(studentBlacklist, student.Username) {
+		return
+	}
+
 	for _, parentMode := range topModes.Data {
 		childModes := api.GetSecondLevelMode(parentMode.Id)
 		for _, childMode := range childModes.Data {
@@ -102,4 +114,14 @@ func study(wg *sync.WaitGroup, topModes *api.Response[api.Mode], student api.Stu
 			}
 		}
 	}
+}
+
+func isInlist(listStr string, name string) bool {
+	var list = strings.Split(listStr, ",")
+	for _, str := range list {
+		if str == name {
+			return true
+		}
+	}
+	return false
 }
