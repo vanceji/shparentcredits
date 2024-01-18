@@ -29,6 +29,9 @@ shparentcredits study -a https://www.example.com -t the-access-token [-s 123] [-
 
 			topModes := api.GetTopLevelMode()
 			students := api.GetStudents(classId)
+			//sort.SliceStable(students.Data, func(i, j int) bool {
+			//	return students.Data[i].Points > students.Data[j].Points
+			//})
 			var wg sync.WaitGroup
 			for _, student := range students.Data {
 				wg.Add(1)
